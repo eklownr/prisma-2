@@ -1,8 +1,14 @@
-// prisma/seed.ts
-import { PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
+import pkg from "@prisma/client";
+const { PrismaClient } = pkg;
 
-const prisma = new PrismaClient();
+import { Pool } from "@neondatabase/serverless";
+import { PrismaPg } from "@prisma/adapter-pg";
+import "dotenv/config";
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
 	// Rensa befintliga data
@@ -38,10 +44,13 @@ async function main() {
 				data: {
 					name: faker.commerce.productName(),
 					price: parseFloat(faker.commerce.price()),
+					stock: faker.number.int({ min: 0, max: 100 }),
 					categoryId:
-						categories[
-							Math.floor(Math.random() * categories.length)
-						].id,
+						categories?.[
+							Math.floor(
+								Math.random() * (categories?.length ?? 0),
+							)
+						]?.id ?? null,
 				},
 			}),
 		),
