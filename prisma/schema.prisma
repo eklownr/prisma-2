@@ -9,10 +9,48 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-model UserLanguage {
-  id        Int     @id @default(autoincrement())
-  name      String?
-  email     String  @unique
-  languages String[] @db.Text // Maps to TEXT[] in PostgreSQL
-  age       Int?
+
+model Customer {
+  id    Int      @id @default(autoincrement())
+  name  String
+  email String   @unique
+  createdAt DateTime @default(now())
+  orders Order[]
 }
+
+model Category {
+  id       Int      @id @default(autoincrement())
+  name     String   @unique
+  products Product[]
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id          Int           @id @default(autoincrement())
+  name        String
+  price       Float
+  stock       Int
+  categoryId  Int
+  category    Category      @relation(fields: [categoryId], references: [id])
+  orderItems  OrderItem[]
+  createdAt DateTime @default(now())
+}
+
+model Order {
+  id           Int           @id @default(autoincrement())
+  customerId   Int
+  customer     Customer      @relation(fields: [customerId], references: [id])
+  orderItems   OrderItem[]
+  createdAt    DateTime      @default(now())
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  order     Order    @relation(fields: [orderId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int      @default(1)
+
+  @@unique([orderId, productId])
+}   

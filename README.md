@@ -1,41 +1,62 @@
 # User Language API
+
 A simple API to manage user language data using Express, TypeScript, and Prisma.
 
 ## How to Run the Server
+
 1. Clone the repository
 2. Install dependencies:
+
 ```bash
 pnpm install
 ```
+
 Set up your .env file with DATABASE_URL
 Generate Prisma client:
+
 ```bash
 npx prisma generate
 ```
+
+Migrate you db:
+
+```bash
+pnpm exec prisma migrate dev --name create_shoping_orders
+```
+
 Start the server:
+
 ```bash
 pnpm run dev
 ```
+
 The server runs on http://localhost:3000
 
 # How to Test Routes
+
 Use curl, Postman, or any API client:
 
-### GET all users: 
+### GET all users:
+
 GET /userlanguages
-### Create a user: 
+
+### Create a user:
+
 POST /userlanguages
 
 ```json
 {
-  "name": "John Doe",
-  "email": "john@example.com",
-  "languages": ["English", "Spanish"],
-  "age": 30
+	"name": "John Doe",
+	"email": "john@example.com",
+	"languages": ["English", "Spanish"],
+	"age": 30
 }
 ```
+
 # New Routes Created
+
 <span style="color:#ff5733"> GET, POST, UPDATE, PATH, DELETE </span>
+
 ```
 GET /userlanguages – Returns all users
 POST /userlanguages – Creates a new user with name, email, languages array, and age
@@ -44,7 +65,6 @@ UPDATE /userlanguages/:language - update language list for user with matching em
 PATCH /userlanguages/:email - update email for user with matching email
 DELETE /userlanguages/:age - set age to delete all less then age
 ```
-   
 
 # Usage prisma command
 
