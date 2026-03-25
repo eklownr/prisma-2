@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="sv">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Produkthantering</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 20px;
+			}
+			input,
+			button {
+				padding: 8px;
+				margin: 5px;
+			}
+			.product {
+				border: 1px solid #ccc;
+				padding: 10px;
+				margin: 10px 0;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Produkter</h1>
+
+		<!-- Lägg till produkt -->
+		<h2>Lägg till produkt</h2>
+		<input id="name" placeholder="Namn" />
+		<input id="price" type="number" placeholder="Pris" />
+		<input id="stock" type="number" placeholder="Lager" />
+		<input id="categoryId" type="number" placeholder="Kategori-ID" />
+		<button onclick="addProduct()">Spara</button>
+
+		<!-- Hämta alla produkter -->
+		<h2>Alla produkter (i lager)</h2>
+		<button onclick="getProducts()">Ladda produkter</button>
+		<div id="products"></div>
+
+		<!-- Hämta per kategori -->
+		<h2>Produkter per kategori</h2>
+		<input id="catId" type="number" placeholder="Kategori-ID" />
+		<button onclick="getByCategory()">Sök</button>
+
+		<!-- Uppdatera produkt -->
+		<h2>Uppdatera produkt</h2>
+		<input id="updateId" type="number" placeholder="Produkt-ID" />
+		<input id="updatePrice" type="number" placeholder="Nytt pris" />
+		<input id="updateStock" type="number" placeholder="Ny lager" />
+		<button onclick="updateProduct()">Uppdatera</button>
+
+		<script>
+			const API = "http://localhost:3000";
+
+			async function getProducts() {
+				const res = await fetch(`${API}/products`);
+				const products = await res.json();
+				document.getElementById("products").innerHTML = products
+					.map(
+						(p) =>
+							`<div class="product">${p.name} - ${p.price} kr (Lager: ${p.stock})</div>`,
+					)
+					.join("");
+			}
+
+			async function addProduct() {
+				const data = {
+					name: document.getElementById("name").value,
+					price: +document.getElementById("price").value,
+					stock: +document.getElementById("stock").value,
+					categoryId: +document.getElementById("categoryId").value,
+				};
+				await fetch(`${API}/products`, {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(data),
+				});
+				getProducts();
+			}
+
+			async function getByCategory() {
+				const catId = document.getElementById("catId").value;
+				const res = await fetch(`${API}/products/${catId}`);
+				const products = await res.json();
+				document.getElementById("products").innerHTML = products
+					.map(
+						(p) =>
+							`<div class="product">${p.name} - ${p.price} kr</div>`,
+					)
+					.join("");
+			}
+
+			async function updateProduct() {
+				const id = document.getElementById("updateId").value;
+				const data = {};
+				if (document.getElementById("updatePrice").value)
+					data.price = +document.getElementById("updatePrice").value;
+				if (document.getElementById("updateStock").value)
+					data.stock = +document.getElementById("updateStock").value;
+
+				await fetch(`${API}/products/${id}`, {
+					method: "PATCH",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(data),
+				});
+				getProducts();
+			}
+		</script>
+	</body>
+</html>
