@@ -11,18 +11,18 @@ datasource db {
 }
 
 model Customer {
-  id    Int      @id @default(autoincrement())
+  id    Int           @id @default(autoincrement())
   name  String
-  email String   @unique
-  createdAt DateTime @default(now())
+  email String        @unique
+  createdAt DateTime  @default(now())
   orders Order[]
 }
 
 model Category {
-  id       Int      @id @default(autoincrement())
-  name     String   @unique
+  id       Int        @id @default(autoincrement())
+  name     String     @unique
   products Product[]
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 }
 
 model Product {
@@ -33,11 +33,12 @@ model Product {
   categoryId  Int
   category    Category      @relation(fields: [categoryId], references: [id])
   orderItems  OrderItem[]
-  createdAt DateTime @default(now())
+  createdAt   DateTime      @default(now())
 }
 
 model Order {
   id           Int           @id @default(autoincrement())
+  orderDate    DateTime      @default(now())
   customerId   Int
   customer     Customer      @relation(fields: [customerId], references: [id])
   orderItems   OrderItem[]
@@ -48,9 +49,9 @@ model OrderItem {
   id        Int      @id @default(autoincrement())
   orderId   Int
   productId Int
+  quantity  Int      
   order     Order    @relation(fields: [orderId], references: [id])
   product   Product  @relation(fields: [productId], references: [id])
-  quantity  Int      @default(1)
 
   @@unique([orderId, productId])
 }   
